@@ -9,6 +9,7 @@
 ## From npm
 
 1. npm install -g nginx-cache-purge
+2. nginx-cache-purge http://www.example.com/sitemap.xml
 
 ## Run from git clone
 
