@@ -8,6 +8,7 @@
   },
   "keywords": [
     "nginx",
+    "cache",
     "purge"
   ],
   "author": "James Stevenson",
