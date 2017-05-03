@@ -14,7 +14,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mistralol/nginx-cache-purge.git"
+    "url": "https://github.com/mistralol/nginx-cache-purge"
   },
   "dependencies": {
     "node-getopt": "^0.2.3",
