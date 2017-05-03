@@ -8,19 +8,19 @@
 
 ## From npm
 
-npm install -g nginx-cache-purge
+1. npm install -g nginx-cache-purge
 
 ## Run from git clone
 
-git clone https://guthub.com/mistralol/nginx-cache-purge
-cd nginx-cache-purge && npm install
-node index.js http://www.example.com/sitemap.xml
+1. git clone https://guthub.com/mistralol/nginx-cache-purge
+2. cd nginx-cache-purge && npm install
+3. node index.js http://www.example.com/sitemap.xml
 
 ## Server configuration
 
 In order for this to work properly nginx must have the proxy_cache_purge configured correctly. If it does not then this program will not be able to purge the cache. Typical system like debian / ubuntu have this by default when using the nginx-extras package. It has not currently been tested with any other type of server.
 
-# Additional ideas / roadmap / todo list
+# TODO List
 
 * Needs support for more input formats
   1. stdin
@@ -37,7 +37,9 @@ For bugs / ideas please use the issue list on github
 # Credits
 
 Original Author: James Stevenson
+
 E-Mail: james@stev.org
+
 BLOG: https://www.stev.org
 
 
