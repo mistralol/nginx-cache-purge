@@ -1,0 +1,24 @@
+{
+  "name": "nginx-cache-purge",
+  "version": "1.0.0",
+  "description": "Sends PURGE requests to nginx",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nginx",
+    "purge"
+  ],
+  "author": "James Stevenson",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mistralol/nginx-cache-purge.git"
+  },
+  "dependencies": {
+    "node-getopt": "^0.2.3",
+    "request": "^2.81.0",
+    "xml-parser": "^1.2.1"
+  }
+}
