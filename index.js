@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 'use strict;'
-var debug = false;
 
 var fs = require('fs');
 var request = require('request');
@@ -11,35 +10,31 @@ var inspect = require('util').inspect;
 var opt = require('node-getopt').create([
     ['h', 'help', 'Print this help'],
     ['d', 'debug', 'Debug mode. Print more messages'],
-    ['n', 'dry-run', 'Simulated - Does not actually send purge command'],
-    ['w', 'wait=ARG', 'Add a delay between requests in ms'],
+    ['g', 'get', 'Do a GET after PURGE'],
+    ['w', 'wait=ARG', 'Add a delay between requests in ms']
 ]).bindHelp();
 
 var args = opt.parse(process.argv.slice(2));
 
-if (args["options"]["debug"])
-    debug = true;
+function IsDebug() {
+    if (args["options"]["debug"] == undefined)
+        return false;
+    if (args["options"]["debug"])
+        return true;
+    return false;
+}
 
 if (args["options"]["wait"] == undefined)
 	args["options"]["wait"] = 0;
 
-if (debug)
+if (IsDebug()) {
 	console.log(args);
+}
 
 //Do the purge
 function DoPurge(origin, urls) {
-    console.log('Remaining:', urls.length);
     if (urls.length == 0) {
         console.log('Completed Purge', origin);
-        return;
-    }
-
-    if (args["options"]["dry-run"]) {
-        var url = urls.pop();
-        setTimeout(function() {
-            console.log('Purge Completed URL:', url, 'PURGED');
-            DoPurge(origin, urls);
-        }, args["options"]["wait"]);
         return;
     }
 
@@ -52,13 +47,35 @@ function DoPurge(origin, urls) {
         if (err) {
             console.log('Purge Failed URL:', url, 'Error:', err);
         } else {
-            console.log('Purge Completed URL:', url, 'PURGED:', res.statusCode);
+            if (IsDebug()) {
+                console.log('Purge Completed URL:', url, 'PURGED:', res.statusCode);
+            }
         }
-        if (args["options"]["wait"] > 0) {
-            setTimeout(function() { DoPurge(origin, urls); }, args["options"]["wait"]);
+
+        function DoNext() {
+            if (args["options"]["wait"] > 0) {
+                setTimeout(function() { DoPurge(origin, urls); }, args["options"]["wait"]);
+            } else {
+                DoPurge(origin, urls);
+            }
+        }
+
+        if (args["options"]["get"] != undefined) {
+            request({
+                uri : url,
+                method: "GET",
+                timeout: 10000
+            }, function(err, res, body) {
+                if (err) {
+                    console.log("GET Failed URL:", url, 'Error:', err);
+                }
+                DoNext();
+            })
         } else {
-            DoPurge(origin, urls);
+            DoNext();
         }
+
+
     });
 }
 
