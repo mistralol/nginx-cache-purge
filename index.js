@@ -10,6 +10,7 @@ var inspect = require('util').inspect;
 var opt = require('node-getopt').create([
     ['h', 'help', 'Print this help'],
     ['d', 'debug', 'Debug mode. Print more messages'],
+    ['e', 'extra=ARG+', 'Load URLs from text file (plain format)'],
     ['g', 'get', 'Do a GET after PURGE'],
     ['p', 'purge', 'PURGE sitemap before GET'],
     ['w', 'wait=ARG', 'Add a delay between requests in ms']
@@ -40,6 +41,10 @@ function DoPurge(origin, urls) {
     }
 
     var url = urls.pop();
+    if (url == '') {
+        DoPurge(origin, urls);
+        return;
+    }
     request({
         uri : url,
         method: "PURGE",
@@ -103,6 +108,14 @@ function DoSiteMap(url) {
             DoPurge(url, urls);
         }
     });
+}
+
+if (args["options"]["extra"]) {
+    for(var i=0;i<args["options"]["extra"].length;i++) {
+        var text = fs.readFileSync(args["options"]["extra"][i]).toString('utf-8');;
+        var lines = text.split("\n");
+        DoPurge(args["options"]["extra"][i], lines);
+    }
 }
 
 for(var i=0;i<args['argv'].length;i++) {
