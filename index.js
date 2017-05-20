@@ -11,6 +11,7 @@ var opt = require('node-getopt').create([
     ['h', 'help', 'Print this help'],
     ['d', 'debug', 'Debug mode. Print more messages'],
     ['g', 'get', 'Do a GET after PURGE'],
+    ['p', 'purge', 'PURGE sitemap before GET'],
     ['w', 'wait=ARG', 'Add a delay between requests in ms']
 ]).bindHelp();
 
@@ -70,11 +71,10 @@ function DoPurge(origin, urls) {
                     console.log("GET Failed URL:", url, 'Error:', err);
                 }
                 DoNext();
-            })
+            });
         } else {
             DoNext();
         }
-
 
     });
 }
@@ -93,26 +93,48 @@ function ParseSiteMap(origin, data) {
     return urls;
 }
 
+function DoSiteMap(url) {
+    console.log('Fetching:', url);
+    request(url, function (error, res, body) {
+        if (error) {
+            console.log('Failed to get:', url);
+        } else {
+            var urls = ParseSiteMap(url, body);
+            DoPurge(url, urls);
+        }
+    });
+}
+
 for(var i=0;i<args['argv'].length;i++) {
     var url = args['argv'][i];
     console.log("Trying:", url);
 
     //Covers both http and https
     if (url.startsWith('http')) {
-        console.log('Fetching:', url);
-        request(url, function (error, res, body) {
-            if (error) {
-                console.log('Failed to get:', url);
-            } else {
-                var urls = ParseSiteMap(url, body);
-                DoPurge(url, urls);
+        if (args["options"]["purge"] != undefined) {
+            if (IsDebug()) {
+                console.log("PURGING Sitemap:", url);
             }
-        });
+            request({
+                uri : url,
+                method: "PURGE",
+                timeout: 10000
+            }, function(err, res, body) {
+                if (err) {
+                    console.log("PURGE Failed For Sitemap:", url, " Error:", err);
+                }
+                DoSiteMap(url);
+            });
+        } else {
+            DoSiteMap(url);
+        }
+
     } else {
         console.log('Reading:', url);
         try {
             var body = fs.readFileSync(url, 'utf8');
-            ParseSiteMap(url, body);
+            var urls = ParseSiteMap(url, body);
+            DoPurge(url, urls);
         } catch(err) {
             console.log('Cannot open file:', url, ' Error:', err);
         }
