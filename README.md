@@ -13,7 +13,7 @@
 
 ## Run from git clone
 
-1. git clone https://guthub.com/mistralol/nginx-cache-purge
+1. git clone https://github.com/mistralol/nginx-cache-purge
 2. cd nginx-cache-purge && npm install
 3. node index.js http://www.example.com/sitemap.xml
 
@@ -27,9 +27,7 @@ In order for this to work properly nginx must have the proxy_cache_purge configu
   1. stdin
   2. json format
   3. other xml formats
-  4. Read a flat text format
 * Needs limited pipelined request support aka run multiple concurrent requests
-* Optional send a GET (multiple?) to each url to get nginx to cache it again
 * Stats etc...
 * Better error reporting
 
