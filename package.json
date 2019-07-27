@@ -21,8 +21,8 @@
     "url": "https://github.com/mistralol/nginx-cache-purge"
   },
   "dependencies": {
-    "node-getopt": "^0.2.3",
-    "request": "^2.81.0",
+    "node-getopt": "^0.2.4",
+    "request": "^2.88.0",
     "xml-parser": "^1.2.1"
   }
 }
